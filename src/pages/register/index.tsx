@@ -1,7 +1,7 @@
 import { Col, Form, Row } from "react-bootstrap";
 
-import { RegisterContainer, RegisterContent } from "./styles";
 import busImg from "../../assets/bus.png";
+import { FormContainer, RegisterContainer, RegisterContent } from "./styles";
 
 
 export const Register = () => {
@@ -10,7 +10,9 @@ export const Register = () => {
       <RegisterContent>
         <img src={busImg} alt="" />
 
-        <Form>
+        <FormContainer>
+          <h2>aehmotor</h2>
+          <h1>Criar uma conta</h1>
           <Form.Label>Nome completo</Form.Label>
           <Form.Control
             required
@@ -42,7 +44,7 @@ export const Register = () => {
             required
             placeholder="Digite a sua senha"
           />
-        </Form>
+        </FormContainer>
       </RegisterContent>
     </RegisterContainer>
   );
