@@ -11,6 +11,8 @@ export const defaultTheme = {
   'gray-900': '#121214',
 
   'blue-300': '#596DB9',
+  'blue-400': '#698DF6',
+  'blue-500': '#3F61F1',
   'blue-900': '#0D1E31',
 
   'green-300': '#00B37E',
