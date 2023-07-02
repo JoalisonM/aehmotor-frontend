@@ -1,11 +1,13 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { Form, Row, Col } from "react-bootstrap";
+import { NavLink, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
+  Label,
   Input,
   Button,
+  Fieldset,
   FormHeader,
   MessageError,
   FormContainer,
@@ -13,9 +15,9 @@ import {
   RegisterContainer,
 } from "./styles";
 import busImg from "../../assets/bus.png";
-import { usePessoa } from "../../hooks/usePessoa";
+import { useStudents } from "../../hooks/useStudent";
 
-const newPessoaFormSchema = z.object({
+const newStudentFormSchema = z.object({
   nome: z.string().nonempty("O nome é obrigatório"),
   email: z.string()
     .nonempty("O e-mail é obrigatório")
@@ -26,23 +28,24 @@ const newPessoaFormSchema = z.object({
   senha: z.string().min(6, "A senha precisa de no mínimo 6 caracteres"),
 });
 
-type NewPessoaFormInputs = z.infer<typeof newPessoaFormSchema>
+type NewStudentFormInputs = z.infer<typeof newStudentFormSchema>
 
-export const Register = () => {
+export const RegisterStudent = () => {
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
     reset,
-  } = useForm<NewPessoaFormInputs>({
-    resolver: zodResolver(newPessoaFormSchema),
+  } = useForm<NewStudentFormInputs>({
+    resolver: zodResolver(newStudentFormSchema),
   });
-  const { createPessoa } = usePessoa();
+  const navigate = useNavigate();
+  const { createStudent } = useStudents();
 
-  const handleCreateNewPessoa = async (data: NewPessoaFormInputs) => {
+  const handleCreateNewStudent = async (data: NewStudentFormInputs) => {
     const { nome, email, nascimento, telefone, senha } = data;
 
-    createPessoa({
+    const response = await createStudent({
       nome,
       email,
       nascimento,
@@ -50,7 +53,10 @@ export const Register = () => {
       senha,
     });
 
-    reset();
+    if (response.id) {
+      navigate("/login");
+      reset();
+    }
   }
 
   return (
@@ -58,67 +64,71 @@ export const Register = () => {
       <RegisterContent>
         <img src={busImg} alt="" />
 
-        <FormContainer onSubmit={handleSubmit(handleCreateNewPessoa)}>
+        <FormContainer onSubmit={handleSubmit(handleCreateNewStudent)}>
           <FormHeader>
             <h2>aehmotor</h2>
             <h1>Criar uma conta</h1>
           </FormHeader>
-          <Row className="mb-3">
-            <Col>
-              <Form.Label>Nome completo</Form.Label>
-              <Input
-                placeholder="Digite o seu nome completo"
-                {...register("nome")}
-              />
-              {errors.nome && <MessageError>{errors.nome.message}</MessageError>}
-            </Col>
-          </Row>
+          <Fieldset cols={false}>
+            <Label htmlFor="nome">Nome completo</Label>
+            <Input
+              id="nome"
+              placeholder="Digite o seu nome completo"
+              {...register("nome")}
+            />
+            {errors.nome && <MessageError>{errors.nome.message}</MessageError>}
+          </Fieldset>
 
-          <Row className="mb-3">
-            <Col>
-              <Form.Label>E-mail</Form.Label>
+          <Fieldset cols={false}>
+              <Label htmlFor="email">E-mail</Label>
               <Input
+                id="email"
                 type="email"
                 placeholder="Digite o seu e-mail"
                 {...register("email")}
               />
               {errors.email && <MessageError>{errors.email.message}</MessageError>}
-            </Col>
-          </Row>
+          </Fieldset>
 
-          <Row className="mb-3">
-            <Col>
-              <Form.Label>Telefone</Form.Label>
+          <Fieldset cols={true}>
+            <div>
+              <Label htmlFor="telefone">Telefone</Label>
               <Input
+                id="telefone"
                 placeholder="Digite o seu telefone"
                 {...register("telefone")}
               />
-            {errors.telefone && <MessageError>{errors.telefone.message}</MessageError>}
-            </Col>
-            <Col>
-              <Form.Label>Data de nascimento</Form.Label>
+              {errors.telefone && <MessageError>{errors.telefone.message}</MessageError>}
+            </div>
+            <div>
+              <Label htmlFor="nascimento">Data de nascimento</Label>
               <Input
+                id="nascimento"
                 type="date"
                 placeholder="Selecione a data"
                 {...register("nascimento")}
               />
-            {errors.nascimento && <MessageError>{errors.nascimento.message}</MessageError>}
-            </Col>
-          </Row>
+              {errors.nascimento && <MessageError>{errors.nascimento.message}</MessageError>}
+            </div>
+          </Fieldset>
 
-          <Row className="mb-5">
-            <Col>
-              <Form.Label>Senha</Form.Label>
+          <Fieldset cols={false}>
+              <Label htmlFor="senha">Senha</Label>
               <Input
+                id="senha"
                 type="password"
                 placeholder="Digite a sua senha"
                 {...register("senha")}
               />
               {errors.senha && <MessageError>{errors.senha.message}</MessageError>}
-            </Col>
-          </Row>
+          </Fieldset>
 
           <Button type="submit" disabled={isSubmitting}>Criar uma conta</Button>
+
+          <small>
+            Já tem uma conta?
+            <NavLink to="/login">Ir para o Login</NavLink>
+          </small>
         </FormContainer>
       </RegisterContent>
     </RegisterContainer>

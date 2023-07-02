@@ -1,15 +1,21 @@
-import { ThemeProvider } from "styled-components";
+import { BrowserRouter } from "react-router-dom";
 
-import { Register } from "./pages/register";
-import { GlobalStyle } from "./styles/global";
-import { defaultTheme } from "./styles/themes/default";
+import { Router } from "./Router";
+import { globalStyles } from "./styles/global";
+import { AuthProvider } from "./contexts/Auth";
+import { StudentsContextProvider } from "./hooks/useStudent";
 
 function App() {
+  globalStyles();
+
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <GlobalStyle />
-      <Register />
-    </ThemeProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <StudentsContextProvider>
+          <Router />
+        </StudentsContextProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
