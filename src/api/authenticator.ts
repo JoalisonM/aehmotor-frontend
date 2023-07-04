@@ -1,5 +1,5 @@
 import { api } from "../lib/axios";
-import { PessoaProps } from "./pessoa";
+import { StudentProps } from "./student";
 
 export interface LoginProps {
   email: string;
@@ -7,21 +7,12 @@ export interface LoginProps {
 }
 
 export interface LoginResponse {
-  pessoa: {
-    id: number;
-    nome: string;
-    email: string;
-    nascimento: String;
-    telefone: string;
-    senha: string;
-    tipo: string;
-  };
   token: string;
 }
 
 const uriLogin = "/login";
 const uriLogout = "/logout";
-const uriGetMe = "/pessoas/me";
+const uriGetMe = "/alunos/me";
 
 export const Authenticator = {
   doLogin(parameter: LoginProps) {
@@ -36,6 +27,6 @@ export const Authenticator = {
   },
 
   getMe() {
-    return api.get<PessoaProps>(uriGetMe);
+    return api.get<StudentProps>(uriGetMe);
   }
 };

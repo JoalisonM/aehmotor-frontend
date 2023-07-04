@@ -1,10 +1,10 @@
 import { useState, useCallback, ReactNode, useEffect } from "react";
 import { useContextSelector } from "use-context-selector";
 
-import { useLogin } from "../../hooks/useLogin";
-import { LoginProps } from "../../api/authenticator";
 import AuthContext from "./context";
-import { PessoaProps } from "../../api/pessoa";
+import { useLogin } from "../../hooks/useLogin";
+import { StudentProps } from "../../api/student";
+import { LoginProps } from "../../api/authenticator";
 
 const STORAGE_KEYS = {
   USER_KEY: "user-storage",
@@ -17,7 +17,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { loading, getSession, logout, getMe, loadingUser } = useLogin();
-  const [user, setUser] = useState<PessoaProps | null>(null);
+  const [user, setUser] = useState<StudentProps | null>(null);
 
   useEffect(() => {
     const validateToken = async () => {
@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         signIn,
         signOut,
         loading,
+        setUser,
         loadingUser,
       }}
     >
@@ -88,17 +89,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 };
 
 export function useAuth() {
+  const user = useContextSelector(AuthContext, (auth) => auth.user);
+  const signIn = useContextSelector(AuthContext, (auth) => auth.signIn);
   const loading = useContextSelector(AuthContext, (auth) => auth.loading);
   const signOut = useContextSelector(AuthContext, (auth) => auth.signOut);
-  const signIn = useContextSelector(AuthContext, (auth) => auth.signIn);
-  const user = useContextSelector(AuthContext, (auth) => auth.user);
+  const setUser = useContextSelector(AuthContext, (auth) => auth.setUser);
   const loadingUser = useContextSelector(AuthContext, (auth) => auth.loadingUser);
 
   return {
+    user,
+    signIn,
     loading,
     signOut,
-    signIn,
-    user,
+    setUser,
     loadingUser,
   };
 }

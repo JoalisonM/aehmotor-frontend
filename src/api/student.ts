@@ -34,6 +34,22 @@ export interface UpdateStudentInput {
   turno: string;
 }
 
+export interface UpdateStudentCollegeInput {
+  id: number;
+  curso: string;
+  turno: string;
+  matricula: string;
+  id_instituicao_ensino: number;
+}
+
+export interface Routes {
+  cidade_destino:string,
+  horario_saida:string,
+  horario_chegada:string,
+  turno:string,
+  nome_instituicao_ensino:string
+}
+
 const uriStudent = "alunos"
 
 export const Student = {
@@ -45,6 +61,10 @@ export const Student = {
     return api.get<StudentProps[] | undefined>(`${uriStudent}`);
   },
 
+  getRoutes(id: number) {
+    return api.get<Routes[]>(`${uriStudent}-rotas/${id}`)
+  },
+
   create(student: CreateStudentInput) {
     return api.post(`${uriStudent}`, student);
   },
@@ -54,4 +74,10 @@ export const Student = {
 
     return api.put(`${uriStudent}/${id}`, newStudent);
   },
+
+  patch(college: UpdateStudentCollegeInput) {
+    const { id, ...newCollege } = college;
+
+    return api.patch(`${uriStudent}/${id}`, newCollege);
+  }
 };

@@ -62,7 +62,7 @@ export const Login = () => {
 
       if (isLogged) {
         const origin = location?.state?.from?.pathname || '/home';
-        navigate(origin);
+        navigate('/home');
 
         reset();
       }

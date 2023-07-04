@@ -4,6 +4,7 @@ import { Router } from "./Router";
 import { globalStyles } from "./styles/global";
 import { AuthProvider } from "./contexts/Auth";
 import { StudentsContextProvider } from "./hooks/useStudent";
+import { CollegesContextProvider } from "./hooks/useColleges";
 
 function App() {
   globalStyles();
@@ -11,9 +12,11 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <StudentsContextProvider>
-          <Router />
-        </StudentsContextProvider>
+        <CollegesContextProvider>
+          <StudentsContextProvider>
+            <Router />
+          </StudentsContextProvider>
+        </CollegesContextProvider>
       </AuthProvider>
     </BrowserRouter>
   );

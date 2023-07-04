@@ -1,5 +1,8 @@
+import { useState } from "react";
 import * as z from "zod";
-import { useForm } from "react-hook-form";
+import { format } from "date-fns";
+import * as Toast from "@radix-ui/react-toast";
+import { useForm, Controller } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -8,14 +11,18 @@ import {
   Input,
   Button,
   Fieldset,
+  ToastRoot,
+  ToastTitle,
   FormHeader,
   MessageError,
+  ToastViewport,
   FormContainer,
   RegisterContent,
   RegisterContainer,
 } from "./styles";
 import busImg from "../../assets/bus.png";
 import { useStudents } from "../../hooks/useStudent";
+import { InputPassword } from "../../components/InputPassword";
 
 const newStudentFormSchema = z.object({
   nome: z.string().nonempty("O nome é obrigatório"),
@@ -23,7 +30,8 @@ const newStudentFormSchema = z.object({
     .nonempty("O e-mail é obrigatório")
     .email("Formato de e-mail inválido")
     .toLowerCase(),
-  nascimento: z.string().nonempty("A data de nascimento é obrigatória"),
+  nascimento: z.date()
+    .max(new Date('2010-01-01'), { message: 'Novo demais para fazer faculdade' }),
   telefone: z.string().nonempty("O telefone é obrigatório"),
   senha: z.string().min(6, "A senha precisa de no mínimo 6 caracteres"),
 });
@@ -32,6 +40,7 @@ type NewStudentFormInputs = z.infer<typeof newStudentFormSchema>
 
 export const RegisterStudent = () => {
   const {
+    control,
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
@@ -41,14 +50,16 @@ export const RegisterStudent = () => {
   });
   const navigate = useNavigate();
   const { createStudent } = useStudents();
+  const [openToast, setOpenToast] = useState(false);
 
   const handleCreateNewStudent = async (data: NewStudentFormInputs) => {
     const { nome, email, nascimento, telefone, senha } = data;
+    const formattedDateString = format(nascimento, "yyyy/MM/dd");
 
     const response = await createStudent({
       nome,
       email,
-      nascimento,
+      nascimento: formattedDateString,
       telefone,
       senha,
     });
@@ -66,10 +77,9 @@ export const RegisterStudent = () => {
 
         <FormContainer onSubmit={handleSubmit(handleCreateNewStudent)}>
           <FormHeader>
-            <h2>aehmotor</h2>
             <h1>Criar uma conta</h1>
           </FormHeader>
-          <Fieldset cols={false}>
+          <Fieldset>
             <Label htmlFor="nome">Nome completo</Label>
             <Input
               id="nome"
@@ -79,7 +89,7 @@ export const RegisterStudent = () => {
             {errors.nome && <MessageError>{errors.nome.message}</MessageError>}
           </Fieldset>
 
-          <Fieldset cols={false}>
+          <Fieldset>
               <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
@@ -106,21 +116,26 @@ export const RegisterStudent = () => {
                 id="nascimento"
                 type="date"
                 placeholder="Selecione a data"
-                {...register("nascimento")}
+                {...register("nascimento", { valueAsDate: true})}
               />
               {errors.nascimento && <MessageError>{errors.nascimento.message}</MessageError>}
             </div>
           </Fieldset>
 
-          <Fieldset cols={false}>
-              <Label htmlFor="senha">Senha</Label>
-              <Input
-                id="senha"
-                type="password"
-                placeholder="Digite a sua senha"
-                {...register("senha")}
-              />
-              {errors.senha && <MessageError>{errors.senha.message}</MessageError>}
+          <Fieldset>
+            <Label htmlFor="senha">Senha:</Label>
+            <Controller
+              name="senha"
+              control={control}
+              render={({ field }) => (
+                <InputPassword
+                  ref={field.ref}
+                  value={field.value}
+                  onChangeValue={field.onChange}
+                />
+              )}
+            />
+            {errors.senha && <MessageError>{errors.senha.message}</MessageError>}
           </Fieldset>
 
           <Button type="submit" disabled={isSubmitting}>Criar uma conta</Button>
@@ -129,6 +144,15 @@ export const RegisterStudent = () => {
             Já tem uma conta?
             <NavLink to="/login">Ir para o Login</NavLink>
           </small>
+
+          <Toast.Provider duration={3000}>
+            <ToastRoot open={openToast} onOpenChange={setOpenToast}>
+              <ToastTitle>
+                Email ou senha inválidos.
+              </ToastTitle>
+            </ToastRoot>
+            <ToastViewport />
+          </Toast.Provider>
         </FormContainer>
       </RegisterContent>
     </RegisterContainer>
