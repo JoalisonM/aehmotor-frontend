@@ -5,6 +5,7 @@ import { globalStyles } from "./styles/global";
 import { AuthProvider } from "./contexts/Auth";
 import { StudentsContextProvider } from "./hooks/useStudent";
 import { CollegesContextProvider } from "./hooks/useColleges";
+import { PretensesContextProvider } from "./hooks/usePretense";
 
 function App() {
   globalStyles();
@@ -14,7 +15,9 @@ function App() {
       <AuthProvider>
         <CollegesContextProvider>
           <StudentsContextProvider>
-            <Router />
+            <PretensesContextProvider>
+              <Router />
+            </PretensesContextProvider>
           </StudentsContextProvider>
         </CollegesContextProvider>
       </AuthProvider>

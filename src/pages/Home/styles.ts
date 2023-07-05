@@ -21,13 +21,13 @@ export const HomeContainer = styled('main', {
   },
 });
 
-export const CardContainer = styled('div', {
+export const CardContainer = styled('form', {
   maxWidth: '70rem',
 
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  justifyContent: 'space-between',
+  gap: '3rem',
 });
 
 export const Card = styled('div', {
@@ -98,7 +98,7 @@ export const Button = styled('button', {
   variants: {
     variant: {
       default: {
-        backgroundColor: '$gray500',
+        backgroundColor: '$red700',
         cursor: 'not-allowed',
       },
       blue: {
